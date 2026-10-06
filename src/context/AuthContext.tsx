@@ -130,18 +130,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     }
 
-    // Demo admin bypass if Supabase is unconfigured or for development preview
-    if (email === 'admin@etopiamart.com' || email === 'admin' || (email && pass.length >= 6)) {
-      const sessionData = { email, loggedInAt: new Date().toISOString() };
+    // Strict local admin credentials check if Supabase is unconfigured or for demo preview
+    const isAllowedEmail = 
+      email.toLowerCase().trim() === 'admin@etopiamart.com' || 
+      email.toLowerCase().trim() === 'muhammedsinan07136@gmail.com';
+    const isAllowedPassword = 
+      pass === 'admin123' || 
+      pass === 'sinan123';
+
+    if (isAllowedEmail && isAllowedPassword) {
+      const sessionData = { email: email.toLowerCase().trim(), loggedInAt: new Date().toISOString() };
       localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(sessionData));
       setIsAdminAuthenticated(true);
-      setAdminEmail(email);
-      showToast('Admin Logged In', 'Welcome to EtopiaMart Admin Panel (Demo Mode)', 'success');
+      setAdminEmail(email.toLowerCase().trim());
+      showToast('Admin Logged In', 'Welcome to EtopiaMart Dashboard', 'success');
       setLoading(false);
       return true;
     }
 
-    showToast('Invalid Credentials', 'Please check your admin email and password.', 'error');
+    showToast('Invalid Credentials', 'Wrong email or password. Access denied.', 'error');
     setLoading(false);
     return false;
   };

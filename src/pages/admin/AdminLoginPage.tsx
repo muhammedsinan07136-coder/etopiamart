@@ -88,11 +88,11 @@ export const AdminLoginPage: React.FC = () => {
             </Button>
           </form>
 
-          {/* Demo Login Tip */}
+          {/* Admin Credentials Info */}
           <div className="bg-dark-950 p-4 rounded-2xl border border-dark-800 text-xs text-dark-400 space-y-1">
             <div className="flex items-center gap-1.5 font-bold text-brand-400">
               <ShieldCheck className="w-4 h-4" />
-              <span>Demo Quick Login Credentials:</span>
+              <span>Authorized Admin Credentials:</span>
             </div>
             <p>Email: <code className="text-white">admin@etopiamart.com</code></p>
             <p>Password: <code className="text-white">admin123</code></p>
