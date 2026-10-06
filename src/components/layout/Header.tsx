@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ShoppingBag, Search, Menu, X, Truck, ShieldCheck, ChevronRight, PackageCheck } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 
 export const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -101,49 +101,54 @@ export const Header: React.FC = () => {
 
           {/* Center Desktop Links */}
           <nav className="hidden lg:flex items-center gap-7 font-semibold text-sm text-dark-700">
-            <Link
-              to="/"
-              className={`hover:text-dark-900 transition-colors relative py-1 ${
-                location.pathname === '/' ? 'text-dark-900 font-bold' : ''
-              }`}
-            >
-              Home
-              {location.pathname === '/' && (
-                <motion.div layoutId="nav-underline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500 rounded-full" />
-              )}
-            </Link>
-            <Link
-              to="/shop"
-              className={`hover:text-dark-900 transition-colors relative py-1 ${
-                location.pathname === '/shop' ? 'text-dark-900 font-bold' : ''
-              }`}
-            >
-              Shop All
-              {location.pathname === '/shop' && (
-                <motion.div layoutId="nav-underline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500 rounded-full" />
-              )}
-            </Link>
-            <Link
-              to="/shop?category=gadgets"
-              className="hover:text-dark-900 transition-colors py-1"
-            >
-              Gadgets
-            </Link>
-            <Link
-              to="/shop?category=home-products"
-              className="hover:text-dark-900 transition-colors py-1"
-            >
-              Home & Kitchen
-            </Link>
-            <Link
-              to="/track-order"
-              className={`hover:text-dark-900 transition-colors py-1 flex items-center gap-1 font-bold ${
-                location.pathname === '/track-order' ? 'text-brand-600 font-extrabold' : 'text-dark-900'
-              }`}
-            >
-              <PackageCheck className="w-4 h-4 text-brand-600" />
-              <span>Track Order</span>
-            </Link>
+            <LayoutGroup>
+              <Link
+                to="/"
+                className={`hover:text-dark-900 transition-colors relative py-1 ${
+                  location.pathname === '/' ? 'text-dark-900 font-bold' : ''
+                }`}
+              >
+                Home
+                {location.pathname === '/' && (
+                  <motion.div layoutId="nav-underline-home" className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500 rounded-full" />
+                )}
+              </Link>
+              <Link
+                to="/shop"
+                className={`hover:text-dark-900 transition-colors relative py-1 ${
+                  location.pathname === '/shop' ? 'text-dark-900 font-bold' : ''
+                }`}
+              >
+                Shop All
+                {location.pathname === '/shop' && (
+                  <motion.div layoutId="nav-underline-shop" className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500 rounded-full" />
+                )}
+              </Link>
+              <Link
+                to="/shop?category=gadgets"
+                className="hover:text-dark-900 transition-colors py-1"
+              >
+                Gadgets
+              </Link>
+              <Link
+                to="/shop?category=home-products"
+                className="hover:text-dark-900 transition-colors py-1"
+              >
+                Home & Kitchen
+              </Link>
+              <Link
+                to="/track-order"
+                className={`hover:text-dark-900 transition-colors py-1 flex items-center gap-1 font-bold ${
+                  location.pathname === '/track-order' ? 'text-brand-600 font-extrabold' : 'text-dark-900'
+                }`}
+              >
+                <PackageCheck className="w-4 h-4 text-brand-600" />
+                <span>Track Order</span>
+                {location.pathname === '/track-order' && (
+                  <motion.div layoutId="nav-underline-track" className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500 rounded-full" />
+                )}
+              </Link>
+            </LayoutGroup>
           </nav>
 
           {/* Right Actions: Search & Cart */}

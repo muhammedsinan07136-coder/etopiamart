@@ -6,6 +6,7 @@ export interface Category {
   description: string;
   active: boolean;
   created_at?: string;
+  updated_at?: string;
   product_count?: number;
 }
 
@@ -34,7 +35,39 @@ export interface CartItem {
   quantity: number;
 }
 
-export type OrderStatus = 'Pending' | 'Confirmed' | 'Packed' | 'Shipped' | 'Out for Delivery' | 'Delivered' | 'Cancelled';
+export type OrderStatus =
+  | 'Pending'
+  | 'Confirmed'
+  | 'Packed'
+  | 'Shipping'
+  | 'Shipped'
+  | 'Out for Delivery'
+  | 'Delivered'
+  | 'Cancelled';
+
+export interface OrderItem {
+  id?: string;
+  order_id?: string;
+  product_id: string;
+  product_name: string;
+  product_image: string;
+  quantity: number;
+  original_price?: number;
+  discount?: number;
+  final_price?: number;
+  subtotal: number;
+  // legacy alias kept for backward compat
+  price?: number;
+}
+
+export interface OrderStatusHistory {
+  id: string;
+  order_id: string;
+  previous_status: string | null;
+  new_status: string;
+  changed_at: string;
+  changed_by: string;
+}
 
 export interface Order {
   id: string;
@@ -52,20 +85,12 @@ export interface Order {
   delivery_charge: number;
   total: number;
   status: OrderStatus;
+  notes?: string;
+  cancelled_at?: string;
   created_at: string;
   updated_at?: string;
   items?: OrderItem[];
-}
-
-export interface OrderItem {
-  id?: string;
-  order_id?: string;
-  product_id: string;
-  product_name: string;
-  product_image: string;
-  quantity: number;
-  price: number;
-  subtotal: number;
+  status_history?: OrderStatusHistory[];
 }
 
 export interface CheckoutFormData {
@@ -93,4 +118,11 @@ export interface ToastMessage {
   type: 'success' | 'error' | 'info';
   title: string;
   message?: string;
+}
+
+export interface AdminUser {
+  id: string;
+  email: string;
+  role: 'admin' | 'super_admin';
+  created_at: string;
 }

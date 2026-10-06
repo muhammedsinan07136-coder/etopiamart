@@ -26,14 +26,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
           const { data: { session } } = await supabase.auth.getSession();
           if (session?.user) {
-            setIsAdminAuthenticated(true);
-            setAdminEmail(session.user.email || 'admin@etopiamart.com');
+            // Secure check: verify user exists in admin_users table
+            const { data: adminRecord } = await supabase
+              .from('admin_users')
+              .select('id, role')
+              .eq('id', session.user.id)
+              .single();
+
+            if (adminRecord) {
+              setIsAdminAuthenticated(true);
+              setAdminEmail(session.user.email || 'admin@etopiamart.com');
+            } else {
+              setIsAdminAuthenticated(false);
+              setAdminEmail(null);
+            }
           } else {
             setIsAdminAuthenticated(false);
             setAdminEmail(null);
           }
         } catch (e) {
           console.warn('Supabase auth session check failed', e);
+          setIsAdminAuthenticated(false);
         }
       } else {
         // Fallback local session check
@@ -50,10 +63,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkSession();
 
     if (isSupabaseConfigured) {
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
         if (session?.user) {
-          setIsAdminAuthenticated(true);
-          setAdminEmail(session.user.email || 'admin@etopiamart.com');
+          const { data: adminRecord } = await supabase
+            .from('admin_users')
+            .select('id, role')
+            .eq('id', session.user.id)
+            .single();
+
+          if (adminRecord) {
+            setIsAdminAuthenticated(true);
+            setAdminEmail(session.user.email || 'admin@etopiamart.com');
+          } else {
+            setIsAdminAuthenticated(false);
+            setAdminEmail(null);
+          }
         } else {
           setIsAdminAuthenticated(false);
           setAdminEmail(null);
@@ -81,6 +105,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
 
         if (data.user) {
+          // Verify admin role in admin_users table
+          const { data: adminRecord, error: adminErr } = await supabase
+            .from('admin_users')
+            .select('id, role')
+            .eq('id', data.user.id)
+            .single();
+
+          if (adminErr || !adminRecord) {
+            await supabase.auth.signOut();
+            showToast('Access Denied', 'Your account does not have administrator privileges in admin_users.', 'error');
+            setLoading(false);
+            return false;
+          }
+
           setIsAdminAuthenticated(true);
           setAdminEmail(data.user.email || email);
           showToast('Admin Logged In', 'Welcome to EtopiaMart Dashboard', 'success');
